@@ -100,7 +100,7 @@ export const buildCLTVScript = ({
     bitcoin.script.compile([
       bitcoin.script.number.encode(lockTime),
       OPS.OP_CHECKLOCKTIMEVERIFY,
-      OPS.OP_DROP,
+      OPS.OP_VERIFY,
     ]),
     buffer,
   ]);
@@ -130,7 +130,7 @@ export function parseCLTVScript({
       decompiled &&
       decompiled.length > 4 &&
       decompiled[1] === OPS.OP_CHECKLOCKTIMEVERIFY &&
-      decompiled[2] === OPS.OP_DROP
+      decompiled[2] === OPS.OP_VERIFY
     ) {
       options.lockTime = bitcoin.script.number.decode(decompiled[0] as Buffer);
       if (
@@ -176,7 +176,7 @@ export function parseCLTVScript({
 }
 
 export const CLTVScript = {
-  //LockTime OP_CHECKLOCKTIMEVERIFY OP_DROP <pubKey> OP_CHECKSIG
+  //LockTime OP_CHECKLOCKTIMEVERIFY OP_VERIFY <pubKey> OP_CHECKSIG
   P2PK: (options: CLTVScriptOptions) => {
     const { lockTime, pubkey } = options;
     if (!pubkey || !pubkey.length) {
@@ -188,7 +188,7 @@ export const CLTVScript = {
       buffer: Script.P2PK({ pubkey }),
     });
   },
-  //LockTime OP_CHECKLOCKTIMEVERIFY OP_DROP OP_DUP OP_HASH160 hash160(<pubKey>) OP_EQUALVERIFY OP_CHECKSIG
+  //LockTime OP_CHECKLOCKTIMEVERIFY OP_VERIFY OP_DUP OP_HASH160 hash160(<pubKey>) OP_EQUALVERIFY OP_CHECKSIG
   P2PKH: (options: CLTVScriptOptions) => {
     const { pubkey, lockTime } = options;
     if (!pubkey || !pubkey.length) {
@@ -200,7 +200,7 @@ export const CLTVScript = {
     });
   },
 
-  //LockTime OP_CHECKLOCKTIMEVERIFY OP_DROP OP_<M> <pubKey>...<pubKey> OP_<N> OP_CHECKMULTISIG
+  //LockTime OP_CHECKLOCKTIMEVERIFY OP_VERIFY OP_<M> <pubKey>...<pubKey> OP_<N> OP_CHECKMULTISIG
   P2MS: (options: CLTVScriptOptions) => {
     const { pubkeys, n, m, lockTime } = options;
     if (!pubkeys || pubkeys.length !== n) {

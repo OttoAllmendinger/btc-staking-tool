@@ -94,7 +94,7 @@ const buildCLTVScript = ({ lockTime, buffer, }) => {
         bitcoin.script.compile([
             bitcoin.script.number.encode(lockTime),
             OPS.OP_CHECKLOCKTIMEVERIFY,
-            OPS.OP_DROP,
+            OPS.OP_VERIFY,
         ]),
         buffer,
     ]);
@@ -113,7 +113,7 @@ function parseCLTVScript({ cltvScript, witness, }) {
         if (decompiled &&
             decompiled.length > 4 &&
             decompiled[1] === OPS.OP_CHECKLOCKTIMEVERIFY &&
-            decompiled[2] === OPS.OP_DROP) {
+            decompiled[2] === OPS.OP_VERIFY) {
             options.lockTime = bitcoin.script.number.decode(decompiled[0]);
             if (decompiled[decompiled.length - 1] === OPS.OP_CHECKMULTISIG &&
                 decompiled.length > 5) {

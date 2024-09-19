@@ -54,7 +54,7 @@ async function StakeBTC() {
   const redeemScript = bitcoin.script.compile([
     bitcoin.script.number.encode(lockTime),
     OPS.OP_CHECKLOCKTIMEVERIFY,
-    OPS.OP_DROP,
+    OPS.OP_VERIFY,
     OPS.OP_DUP,
     OPS.OP_HASH160,
     bitcoin.crypto.hash160(pubkey),
